@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Quantum Sui Foundation
 // SPDX-License-Identifier: Apache-2.0
 
-/// Quantum Sui (QSUI) - Post-Quantum Cryptographic Token & Treasury Module
+/// Quantum Sui (QSUI) - Token & Treasury Module. Real PQC verification is not implemented in this Move package.
 module quantum_sui::qsui {
     use std::option;
     use sui::coin::{Self, Coin, TreasuryCap};
@@ -19,7 +19,7 @@ module quantum_sui::qsui {
         total_supply: u64,
         max_hard_cap: u64, // 1,000,000,000,000,000 (1,000 Trillion QSUI)
         treasury_active: bool,
-        pqc_signature_scheme: vector<u8>, // NIST ML-DSA (Crystals-Dilithium)
+        pqc_signature_scheme: vector<u8>, // Research metadata only; not proof of on-chain ML-DSA verification
     }
 
     /// Event emitted on token minting / distribution
@@ -36,7 +36,7 @@ module quantum_sui::qsui {
             9, // 9 Decimals
             b"QSUI",
             b"Quantum Sui",
-            b"Quantum Sui (QSUI) is the world's premier Post-Quantum Cryptographic Web 4.0 token with Conway AI Automaton on Sui.",
+            b"Quantum Sui (QSUI) is a research and prototype Web 4.0 token project on Sui.",
             option::some(url::new_unsafe_from_bytes(b"https://ais-pre-glwly4kx6sv4xqcbg2jev6-1014791165952.asia-southeast1.run.app/icon.png")),
             ctx
         );
@@ -49,7 +49,7 @@ module quantum_sui::qsui {
             total_supply: 0,
             max_hard_cap: 1000000000000000, // 1,000 Trillion
             treasury_active: true,
-            pqc_signature_scheme: b"ML-DSA-87 (NIST FIPS 204)",
+            pqc_signature_scheme: b"RESEARCH_METADATA_ONLY",
         };
 
         transfer::share_object(state);
@@ -73,13 +73,12 @@ module quantum_sui::qsui {
         event::emit(QsuiDistributedEvent {
             recipient,
             amount,
-            is_pqc_verified: true,
+            is_pqc_verified: false,
         });
     }
 
-    /// Verify post-quantum ML-DSA module lattice signature proof on-chain
+    /// PQC verification is not implemented in this Move package.
     public fun verify_pqc_proof(_signature: vector<u8>, _public_key: vector<u8>, _message: vector<u8>): bool {
-        // High-dimensional lattice verification stub on Sui Move
-        true
+        false
     }
 }
