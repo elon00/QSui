@@ -1,5 +1,5 @@
 # Quantum Sui (QSUI) ⚡
-### Next-Generation Post-Quantum Cryptographic Web 4.0 Token & Conway AI Cellular Automaton on Sui Blockchain
+### Research Web 4.0 Token & Conway Cellular Automaton Prototype on Sui
 
 <div align="center">
 
@@ -9,7 +9,7 @@
 [![Netlify Status](https://img.shields.io/badge/Hosted%20On-Netlify-00AD9F?style=for-the-badge&logo=netlify&logoColor=white)](https://qsui.netlify.app)
 [![License](https://img.shields.io/badge/License-Apache%202.0-F39C12?style=for-the-badge)](LICENSE)
 
-**Live Production Web App:** [https://qsui.netlify.app](https://qsui.netlify.app)  
+**Public Web App (deployment status must be independently checked):** [https://qsui.netlify.app](https://qsui.netlify.app)  
 **Sui Testnet Explorer:** [https://suiscan.xyz/testnet](https://suiscan.xyz/testnet)
 
 </div>
@@ -18,9 +18,9 @@
 
 ## 🌌 Overview
 
-**Quantum Sui (QSUI)** is a premier Post-Quantum Cryptographic (PQC) Web 4.0 token and decentralized infrastructure native to the high-performance **Sui blockchain DAG**. 
+**Quantum Sui (QSUI)** is a research and prototype Web 4.0 token project exploring Sui Move, Conway cellular automata, AI-assisted interfaces, and future post-quantum migration concepts. 
 
-By replacing classical elliptic curve cryptography (secp256k1/ECDSA) with NIST-standardized **Module-Lattice-Based Digital Signature Algorithm (ML-DSA / Crystals-Dilithium)** and **Module-Lattice Key Encapsulation Mechanism (ML-KEM / Crystals-Kyber)**, Quantum Sui provides mathematical immunity against polynomial-time Shor’s algorithm and Grover’s quadratic search attacks on quantum computers.
+The checked-in Move package does **not** implement ML-DSA or ML-KEM verification. PQC references are research and migration goals until a reviewed implementation, vectors, and reproducible evidence are added.
 
 QSUI merges post-quantum cryptographic primitives with an **on-chain Conway AI Cellular Automaton**, an **Autonomous AI Agentic Chatbot (Sentinel, Legal, Automaton, Marketing personas)**, a **1,000 Trillion Supply Token Launchpad**, and an institutional **Laws, Securities & Testing verification suite**.
 
@@ -67,7 +67,7 @@ QSUI Architecture
 ### 1. QSUI Token Module (`quantum_sui::qsui`)
 - **Supply Cap**: `1,000,000,000,000,000` (1,000 Trillion QSUI with 9 Decimals)
 - **Treasury Management**: Enforces non-duplicable `TreasuryCap<QSUI>` and hard-cap bounds.
-- **PQC Scheme**: On-chain verification for `ML-DSA-87 (NIST FIPS 204)` signatures.
+- **PQC status**: Research metadata only; the current Move module does not perform ML-DSA verification.
 
 ```move
 module quantum_sui::qsui {
@@ -209,11 +209,10 @@ The application is configured via [`netlify.toml`](netlify.toml) with automatic 
 
 ---
 
-## ⚖️ Legal & Securities Compliance
+## ⚖️ Legal and compliance research status
 
-- **SEC Howey Test**: Evaluated across all 4 Howey prongs (Consumptive utility score 96/100; non-security utility asset).
-- **EU MiCA Compliance**: Classified under Article 4 utility exemptions with audited low-energy PoS footprint on Sui.
-- **Move Bytecode Verifier**: Passed 100,000-cycle invariant fuzzing with zero reentrancy or arithmetic overflow vulnerabilities.
+- This repository is **not** a legal opinion, SEC classification, MiCA certification, or securities-compliance determination.
+- Move verification and fuzzing claims require reproducible test artifacts before being presented as verified.
 
 ---
 
