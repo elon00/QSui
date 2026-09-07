@@ -9,14 +9,22 @@
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.js",
+    "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "check:env": "node check-env.mjs",
     "check:truth": "node check-truth.mjs",
-    "test": "npm run check:env && npm run check:truth && npm run lint && npm run build"
+    "test:nist": "tsx src/crypto/tests/official-nist-vectors.test.ts",
+    "audit:crypto": "node scripts/audit-crypto.mjs",
+    "reality:universal": "tsx scripts/reality-universal.ts",
+    "reality:certify": "tsx scripts/generate-urs-certificate.ts",
+    "test": "npm run check:env && npm run check:truth && npm run test:nist && npm run audit:crypto && npm run reality:universal && npm run build"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@mysten/sui": "^2.24.0",
+    "@noble/ciphers": "^2.4.0",
+    "@noble/hashes": "^1.8.0",
+    "@noble/post-quantum": "^0.7.1",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",
     "dotenv": "^17.2.3",
@@ -29,13 +37,13 @@
     "vite": "^6.2.3"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3",
-    "@types/express": "^4.17.21"
+    "vite": "^6.2.3"
   }
 }

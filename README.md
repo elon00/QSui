@@ -104,7 +104,7 @@ module quantum_sui::qsui {
             total_supply: 0,
             max_hard_cap: 1000000000000000,
             treasury_active: true,
-            pqc_signature_scheme: b"ML-DSA-87 (NIST FIPS 204)",
+            pqc_signature_scheme: b"RESEARCH_METADATA_ONLY",
         };
         transfer::share_object(state);
         transfer::public_transfer(treasury_cap, tx_context::sender(ctx));

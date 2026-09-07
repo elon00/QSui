@@ -1,0 +1,14 @@
+{
+  "protocol": "SUI.PQC (QSui)",
+  "version": "1.0.0",
+  "commitSha": "06b360d3da89fb7d48456f403fb73b6a3a4083fd",
+  "timestamp": "2026-09-07T10:52:24.144Z",
+  "truthScore": 10,
+  "automatedProfile": "9.6 / 10 (A+)",
+  "humanAuditScore": 0.6,
+  "finalUrsScore": 6,
+  "weakestLinkDimension": "H (Human/External 3rd-party firm audit required for 10/10)",
+  "gatesPassed": 10,
+  "manifestSubsystems": 5,
+  "masterRealityHashSha256": "9c0f3667983618eb82b0f7ba10f79f3401fb363758326a94596bd54e7d8144c6"
+}

@@ -1,0 +1,76 @@
+{
+  "results": [
+    {
+      "gate": 1,
+      "name": "Claim Freeze & Manifest Registration",
+      "passed": true,
+      "score": 1,
+      "evidence": "Audited Manifest: Registered subsystems with explicit truth taxonomy"
+    },
+    {
+      "gate": 2,
+      "name": "Simulation & Math.random() Scanner in Cryptographic Path",
+      "passed": true,
+      "score": 1,
+      "evidence": "Zero Math.random() simulation detected in src/crypto/"
+    },
+    {
+      "gate": 3,
+      "name": "NIST FIPS 204 ML-DSA-65 Keygen & Wire Invariants",
+      "passed": true,
+      "score": 1,
+      "evidence": "ML-DSA-65: Genuine pure-TS lattice keygen executed (1952B pk, 4032B sk)"
+    },
+    {
+      "gate": 4,
+      "name": "Sui Address & Commitment Hash Integrity",
+      "passed": true,
+      "score": 1,
+      "evidence": "Sui Address (0x7b4b0ac41500...) & PQC Commitment Derived"
+    },
+    {
+      "gate": 5,
+      "name": "Pure-TS ML-DSA-65 Signing & Tamper Rejection",
+      "passed": true,
+      "score": 1,
+      "evidence": "ML-DSA-65 Signature Verified (3309 bytes); Bit-flip tampering rejected"
+    },
+    {
+      "gate": 6,
+      "name": "Sui Dual Hybrid Conjunction (Ed25519 ∧ ML-DSA-65)",
+      "passed": true,
+      "score": 1,
+      "evidence": "Dual Hybrid Conjunction: Valid ONLY when Ed25519 AND ML-DSA-65 both pass; Partial tampering strictly rejected"
+    },
+    {
+      "gate": 7,
+      "name": "NIST FIPS 203 ML-KEM-768 & §7.3 Implicit Rejection",
+      "passed": true,
+      "score": 1,
+      "evidence": "ML-KEM-768 KEX converged (1184B pk, 1088B ct, 32B ss); FIPS 203 §7.3 leaks 0 oracle bits"
+    },
+    {
+      "gate": 8,
+      "name": "Sui RPC Network Health Check",
+      "passed": true,
+      "score": 1,
+      "evidence": "Sui RPC endpoint responded with valid JSON-RPC frame"
+    },
+    {
+      "gate": 9,
+      "name": "Reproducibility & NIST/RFC Test Vector Verification",
+      "passed": true,
+      "score": 1,
+      "evidence": "RFC 5869, Keccak-256, Blake2b-256, FIPS 203 & FIPS 204 KAT invariants verified"
+    },
+    {
+      "gate": 10,
+      "name": "Multiplicative Reality & Universal 10/10 Law Calculation",
+      "passed": true,
+      "score": 1,
+      "evidence": "URS_10 = min(all_gates) * 10 = 10.0 / 10 (Internal Automated Gates)"
+    }
+  ],
+  "u10Score": 10,
+  "timestamp": "2026-09-07T10:52:23.913Z"
+}
