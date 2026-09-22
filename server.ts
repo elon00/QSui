@@ -3,11 +3,12 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  const model = process.env.GEMINI_MODEL?.trim();
+  if (!apiKey || !model) {
     return null;
   }
   return new GoogleGenAI({
@@ -22,16 +23,25 @@ function getGeminiClient(): GoogleGenAI | null {
 
 async function startServer() {
   const app = express();
-  app.use(express.json());
+  app.disable("x-powered-by");
+  app.use(express.json({ limit: "256kb" }));
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    next();
+  });
 
   // API Health Check
   app.get("/api/health", (req, res) => {
     res.json({
       status: "ok",
-      project: "QSUI",
-      network: "Sui Network (Post-Quantum Layer)",
-      totalSupply: "1,000,000,000,000,000 QSUI (1,000 Trillion)",
+      project: "QSUI research prototype",
+      network: "No public-network deployment is asserted by this health endpoint",
+      tokenModelCap: "1,000,000,000,000,000 QSUI (design model)",
+      applicationPqcStatus: "ML-DSA/ML-KEM integration tests exist; Move contracts do not enforce PQC",
       hasGeminiKey: Boolean(process.env.GEMINI_API_KEY),
+      hasGeminiModel: Boolean(process.env.GEMINI_MODEL),
     });
   });
 
@@ -48,38 +58,10 @@ async function startServer() {
 
       // System instructions per agent persona
       const systemInstructions: Record<string, string> = {
-        sentinel: `You are the Quantum Sui (QSUI) Autonomous Sentinel, the primary AI intelligence and chief quantum security architect for the Quantum Sui project.
-Quantum Sui (QSUI) is a groundbreaking Post-Quantum Cryptography (PQC) Web 4.0 token and decentralized infrastructure built on the Sui blockchain (full name: Quantum Sui, short/ticker: QSUI).
-Key Project Facts:
-- Full Name: Quantum Sui | Short/Ticker: QSUI
-- Total Supply: 1,000 Trillion (1,000,000,000,000,000) QSUI tokens.
-- Native Chain: Sui high-performance DAG (parallel transaction pipelines, object-centric Move architecture).
-- Cryptographic Standards: ML-DSA (Crystals-Dilithium), ML-KEM (Crystals-Kyber), Falcon, and SPHINCS+ post-quantum algorithms designed to neutralize Shor's and Grover's quantum computing attacks.
-- Core Features: Web 4.0 Autonomous Agent mesh, Conway AI Cellular Automaton neural consensus, Token Launchpad with decentralized allocation tiers, and institutional legal/securities verification.
-- Tone: Highly knowledgeable, mathematically rigorous, futuristic, authoritative, yet approachable and helpful. Format your responses with structured markdown, concise bullet points, and high technical accuracy.`,
-
-        legal: `You are the Quantum Sui (QSUI) Legal & Securities Compliance Officer and Chief Regulatory Auditor.
-Your responsibility is analyzing cryptocurrency regulations, token classification, securities law (including the U.S. SEC Howey Test), EU MiCA (Markets in Crypto-Assets) compliance, FATF Travel Rule, and smart contract formal verification standards for Quantum Sui (QSUI).
-Key Regulatory Position for Quantum Sui (QSUI):
-- Full Name: Quantum Sui | Ticker: QSUI
-- Howey Test Assessment: QSUI operates as a decentralized cryptographic utility and node verification asset (decoupled utility, open governance, no dividends, permissionless node staking, autonomous Conway mesh).
-- MiCA Compliance: Registered as an algorithmic utility token under EU MiCA Article 4 exemptions with audited environmental footprint on Sui's proof-of-stake DAG.
-- Smart Contract Testing: Move bytecode formal verification, invariant testing, reentrancy resistance, and Shor's algorithm stress testing.
-- Tone: Professional, structured, legally precise, analytical. Emphasize compliance, risk disclosures, formal audit procedures, and non-security utility classifications.`,
-
-        automaton: `You are the Quantum Sui (QSUI) Conway AI Cellular Automaton Engine & Cybernetician.
-You specialize in cellular automata (John Conway's Game of Life, B3/S23), artificial life, discrete dynamical systems, quantum entropy mapping, and decentralized Web 4.0 self-organizing consensus for Quantum Sui.
-Key Topics:
-- Conway Rules & Variations: Classical Game of Life (B3/S23), Quantum Entanglement cellular automaton, Neural Automaton mutation, and Web 4.0 Peer Mesh state propagation.
-- Practical Application: Generating decentralized pseudo-random quantum entropy seeds for cryptographic key verification on Sui.
-- Tone: Creative, analytical, mathematically curious, cybernetic, visionary.`,
-
-        marketing: `You are the Quantum Sui (QSUI) Global Chief Marketing Officer (CMO) and Token Growth Strategist.
-You specialize in global standard crypto marketing strategies, Tier-1 CEX listing roadmaps, viral community flywheels, liquidity bootstrapping (LBA), KOL syndication, institutional narrative framing, and ecosystem launchpads for the 1,000 Trillion Quantum Sui (QSUI) supply.
-Key Strategies:
-- 4-Phase Marketing Flywheel: 1) Quantum Awareness & Shor's Threat Education, 2) Testnet Faucet & Conway Automaton viral campaigns, 3) Tier-1 CEX Listings (Binance, OKX, Bybit, Coinbase), 4) Institutional Web 4.0 Enterprise adoption.
-- Supply Dynamics: 1,000 Trillion QSUI supply structured for mass accessibility, micro-gas fee staking, global liquidity pools, and community airdrops.
-- Tone: High-energy, strategic, data-driven, marketing-savvy, visionary, and professional.`,
+        sentinel: `You are the QSUI research assistant. Treat QSUI as a research/testnet-oriented prototype. The checked-in Sui Move modules do not implement ML-DSA or ML-KEM verification. Do not claim mainnet deployment, independent audit, whole-system quantum safety, real liquidity, exchange listings, validator counts, partnerships, or performance unless the user supplies reproducible external evidence. Clearly distinguish application-layer PQC tests from on-chain enforcement.`,
+        legal: `You are a regulatory-research assistant for the QSUI prototype. Provide educational issue-spotting only, not legal advice or a legal classification. Do not claim that QSUI is registered, MiCA-compliant, a non-security, exempt, approved, or formally verified. Explain that token classification depends on facts, jurisdiction, distribution, governance, marketing, and professional legal review.`,
+        automaton: `You are a cellular-automata research assistant. Explain Conway B3/S23 and the repository's experiments accurately. Do not describe the automaton as quantum entropy, consensus, a cryptographic beacon, or production validator infrastructure unless concrete implementation evidence supports that statement.`,
+        marketing: `You are a marketing-draft assistant for QSUI. Keep all copy evidence-first. Treat tokenomics, exchange/liquidity plans, airdrops, partnerships, roadshows, and adoption as proposals unless independently evidenced. Never guarantee returns, listings, liquidity, compliance, security, or production readiness.`,
       };
 
       const selectedInstruction = systemInstructions[persona] || systemInstructions.sentinel;
@@ -87,45 +69,10 @@ Key Strategies:
       if (!client) {
         // Fallback simulated intelligent response if GEMINI_API_KEY is not yet attached
         const fallbackReplies: Record<string, string> = {
-          sentinel: `### 🛡️ QSUI Autonomous Sentinel Report
-**Status: QSUI Quantum Lattice Nominal | Sui DAG Active**
-
-Regarding your query: "${message}"
-
-1. **Post-Quantum Cryptographic Integrity**: QSUI protects digital assets against Shor's algorithm by replacing elliptic curves (secp256k1) with NIST-standardized **ML-DSA (Crystals-Dilithium)** and **ML-KEM (Crystals-Kyber)** high-dimensional lattice systems (dimension $n=1024$).
-2. **Sui Blockchain Synchronization**: Sui's parallel transaction execution and asynchronous Narwhal/Bullshark consensus cleanly process the expanded 2.4KB - 4.5KB PQC signature payloads without throughput degradation.
-3. **Web 4.0 Autonomous Layer**: Interoperable AI agents utilize QSUI for micro-attestation proofs, smart contract execution, and decentralized lattice key rotation.
-
-*Note: For real-time dynamic Gemini inference, ensure \`GEMINI_API_KEY\` is configured in AI Studio Secrets.*`,
-
-          legal: `### ⚖️ QSUI Legal & Regulatory Compliance Audit
-**Subject: "${message}"**
-
-1. **SEC Howey Test Evaluation**:
-   - **Investment of Money**: Participant commits funds for decentralized node hardware / utility validation.
-   - **Common Enterprise**: Decentralized horizontal network; no centralized managerial reliance.
-   - **Expectation of Profits**: Primary token utility is computational signature verification and gas staking, not passive investment contracts.
-   - **Efforts of Others**: Protocol runs on open-source autonomous Conway automata and Sui validators.
-   - **Conclusion**: QSUI exhibits strong characteristics of a **Non-Security Consumptive Utility Token**.
-2. **EU MiCA Compliance**: Technical whitepaper disclosures, automated ESG proof on Sui PoS DAG, and AML/CFT compliance modules integrated.
-3. **Formal Verification**: Verified using Sui Move Bytecode Verifier and 100,000-cycle invariant fuzzing.`,
-
-          automaton: `### 🧬 Conway AI Automaton & Quantum Entropy Synthesis
-**Query Analysis: "${message}"**
-
-1. **Cellular Automaton Dynamics**: Conway's Game of Life operates on grid neighbor counts (Birth on 3, Survival on 2 or 3).
-2. **Quantum Entropy Integration in QSUI**: In QSUI, lattice superpositions continuously inject pseudo-random quantum perturbations into cell state mutations, generating non-deterministic evolutionary trajectories.
-3. **Web 4.0 Applications**: Decentralized cellular automata serve as cryptographic beacon generators and autonomous distributed consensus validators across the Sui network.`,
-
-          marketing: `### 📈 QSUI Global Standard Marketing Brief
-**Focus Area: "${message}"**
-
-1. **1,000 Trillion QSUI Supply Architecture**: Designed to maximize retail liquidity, sub-cent microtransaction utility on Sui, and frictionless global accessibility.
-2. **Go-To-Market (GTM) Strategy**:
-   - **Phase 1: Narrative Dominance**: Positioning QSUI as the definitive Post-Quantum standard for Web 4.0.
-   - **Phase 2: Viral Ecosystem**: Conway AI Automaton social sharing, quantum defense sandbox bounties, and testnet airdrops.
-   - **Phase 3: Liquidity & CEX Playbook**: Strategic MM partnerships, Sui DEX liquidity pools (Cetus/Turbos), and Tier-1 exchange listings.
-   - **Phase 4: Institutional Roadshows**: Keynotes at Token2049, Sui Basecamp, and Quantum Cryptography summits.`,
+          sentinel: `### QSUI Research Assistant\n\nNo live AI provider is configured. QSUI is a research/testnet-oriented prototype. The repository contains application-layer ML-DSA/ML-KEM tests, while the checked-in Move contracts do not enforce PQC. Your query was: "${message}"`,
+          legal: `### QSUI Regulatory Research\n\nNo live AI provider is configured. This local fallback cannot determine securities, MiCA, tax, AML, or other legal status. QSUI's tokenomics and governance materials are design proposals and require jurisdiction-specific professional review. Your query was: "${message}"`,
+          automaton: `### QSUI Conway Research\n\nNo live AI provider is configured. The repository includes Conway cellular-automaton experiments. They should not be described as quantum entropy, public-network consensus, or cryptographic validation without separate evidence. Your query was: "${message}"`,
+          marketing: `### QSUI Marketing Draft Boundary\n\nNo live AI provider is configured. Market copy must treat exchange listings, liquidity, partnerships, token value, adoption, and institutional use as unverified unless independently evidenced. Your query was: "${message}"`,
         };
 
         return res.json({
@@ -138,7 +85,7 @@ Regarding your query: "${message}"
 
       // Live Gemini 3.7 Flash generation
       const response = await client.models.generateContent({
-        model: "gemini-3.7-flash",
+        model: process.env.GEMINI_MODEL!,
         contents: [
           ...history.map((h: { role: string; content: string }) => ({
             role: h.role === "assistant" ? "model" : "user",
@@ -186,35 +133,33 @@ Regarding your query: "${message}"
           params: [],
         }),
       });
+      if (!response.ok) {
+        throw new Error(`Sui RPC returned HTTP ${response.status}`);
+      }
       const data = await response.json();
+      if (data?.error || data?.result === undefined) {
+        throw new Error(data?.error?.message || "Sui RPC response missing checkpoint result");
+      }
       res.json({
         online: true,
-        network: "Sui Testnet",
+        network: "Sui Testnet RPC",
         rpcEndpoint: "https://fullnode.testnet.sui.io:443",
-        checkpoint: data.result || "38914500",
-        epoch: 482,
-        packageId: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12",
-        treasuryCap: "0x9812bc4f910a37b12d59e4401c22998a14b51203",
-        coinType: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12::qsui::QSUI",
-        symbol: "QSUI",
-        name: "Quantum Sui",
-        maxSupply: "1,000,000,000,000,000",
-        pqcStandard: "ML-DSA-87 (NIST FIPS 204)",
+        checkpoint: String(data.result),
+        packageId: process.env.QSUI_PACKAGE_ID || null,
+        treasuryCap: process.env.QSUI_TREASURY_CAP || null,
+        deploymentVerifiedByThisEndpoint: false,
+        applicationPqcStatus: "The web app has ML-DSA/ML-KEM integration tests; checked-in Move modules do not verify PQC signatures.",
       });
     } catch (e: any) {
-      res.json({
-        online: true,
-        network: "Sui Testnet",
+      res.status(503).json({
+        online: false,
+        network: "Sui Testnet RPC",
         rpcEndpoint: "https://fullnode.testnet.sui.io:443",
-        checkpoint: "38914500",
-        epoch: 482,
-        packageId: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12",
-        treasuryCap: "0x9812bc4f910a37b12d59e4401c22998a14b51203",
-        coinType: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12::qsui::QSUI",
-        symbol: "QSUI",
-        name: "Quantum Sui",
-        maxSupply: "1,000,000,000,000,000",
-        pqcStandard: "ML-DSA-87 (NIST FIPS 204)",
+        checkpoint: null,
+        packageId: process.env.QSUI_PACKAGE_ID || null,
+        treasuryCap: process.env.QSUI_TREASURY_CAP || null,
+        deploymentVerifiedByThisEndpoint: false,
+        error: e?.message || "Sui Testnet RPC unavailable",
       });
     }
   });
@@ -226,36 +171,28 @@ Regarding your query: "${message}"
       const client = getGeminiClient();
 
       const prompts: Record<string, string> = {
-        howey_test: `Perform an exhaustive, institutional Howey Test legal classification analysis for the QSUI token (Total Supply: 1,000 Trillion, built on Sui with Post-Quantum Cryptography and autonomous Conway AI automata). Provide a structured scoring table across all four Howey prongs and deliver a formal legal conclusion for US securities classification.`,
-        tokenomics_audit: `Provide an in-depth global market analysis and quantitative stress test for QSUI's 1,000 Trillion token supply, liquidity depth, staking APY mechanics, and deflationary burn mechanisms on the Sui ecosystem.`,
-        quantum_threat_audit: `Provide a formal cryptographic defense audit comparing QSUI's Crystals-Dilithium and Crystals-Kyber lattice parameters against Shor's 4096-qubit discrete logarithm attacks and Grover's search algorithm.`,
-        automaton_simulation: `Analyze the mathematical properties and emergent self-organization of Conway's Game of Life under QSUI's quantum entropy mutation rules for Web 4.0 decentralized consensus.`,
+        howey_test: `Provide an educational Howey-test issue-spotting analysis for the QSUI design. Do not provide a definitive legal classification or claim registration, exemption, approval, or compliance. Identify missing facts and recommend qualified legal review.`,
+        tokenomics_audit: `Analyze the QSUI tokenomics design as a hypothetical model. Do not assume real liquidity, APY, burns, exchange listings, market value, users, or deployed supply. Identify economic risks, assumptions, and evidence needed.`,
+        quantum_threat_audit: `Analyze the repository's application-layer ML-DSA/ML-KEM experiments and their limitations. Do not claim whole-system quantum safety, specific quantum break timelines, or on-chain PQC enforcement without evidence.`,
+        automaton_simulation: `Analyze the mathematical properties of the repository's Conway Game of Life experiments. Keep them separate from quantum entropy, cryptographic randomness, and consensus claims unless those mechanisms are actually implemented and evidenced.`,
       };
 
       const promptToRun = prompts[type] || prompts.howey_test;
 
       if (!client) {
         return res.json({
-          report: `### 📑 Automated Intelligence Report: ${type.toUpperCase()}
-**Project: QSUI (Quantum Sui Web 4.0 Ecosystem)**
-- **Audit Timestamp**: ${new Date().toISOString()}
-- **Analysis Scope**: ${promptToRun.slice(0, 120)}...
-
-#### Key Findings:
-1. **Cryptographic Integrity**: 100% immune to Shor's factorization algorithm up to $10^6$ logical qubits.
-2. **Regulatory Positioning**: Decentralized utility asset on Sui DAG with verifiable on-chain consumption and validator staking.
-3. **Market Structure**: 1,000 Trillion supply balanced with 25% community ecosystem staking and algorithmic burning.
-4. **Autonomous Infrastructure**: Conway AI Automaton provides non-custodial entropy for post-quantum key rotations.`,
+          report: `### QSUI Local Research Note: ${type.toUpperCase()}\n\nNo live AI provider is configured. This endpoint is returning a disclosure-only fallback, not a legal opinion, security audit, market analysis, or cryptographic certification.\n\nRequested scope: ${promptToRun}`,
           type,
           isSimulated: true,
+          disclaimer: "Research aid only; no legal, financial, security, deployment, or compliance conclusion is asserted.",
         });
       }
 
       const response = await client.models.generateContent({
-        model: "gemini-3.7-flash",
+        model: process.env.GEMINI_MODEL!,
         contents: `${promptToRun}\n\nAdditional user parameters: ${details}`,
         config: {
-          systemInstruction: "You are the Senior Cryptographic & Regulatory Auditor for QSUI. Generate high-precision, executive-level technical reports with clear markdown tables, scores, and actionable recommendations.",
+          systemInstruction: "You are a research assistant for QSUI. Provide evidence-based analysis, clearly identify unknowns, and do not issue legal conclusions, compliance certifications, security certifications, investment recommendations, or claims of deployment/adoption without reproducible evidence.",
         },
       });
 
@@ -286,7 +223,7 @@ Regarding your query: "${message}"
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`QSUI Quantum Server running on http://localhost:${PORT}`);
+    console.log(`QSUI research prototype server listening on port ${PORT}; public deployment, legal status, market adoption, and on-chain PQC are not asserted`);
   });
 }
 

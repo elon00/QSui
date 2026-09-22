@@ -36,3 +36,5 @@ jobs:
         run: npm run reality:universal
       - name: Production build
         run: npm run build
+      - name: Production dependency audit
+        run: npm audit --omit=dev --audit-level=high

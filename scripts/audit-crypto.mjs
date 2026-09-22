@@ -8,7 +8,7 @@
  * - NIST FIPS 203 ML-KEM-768 lattice execution
  * - FIPS 203 §7.3 Implicit Rejection
  * - NIST FIPS 204 ML-DSA-65 digital signatures
- * - Wycheproof negative bit-flip tamper rejection
+ * - Repository-defined adversarial tamper rejection
  * - Sui Dual Hybrid Conjunction conformance
  */
 
@@ -18,9 +18,10 @@ import { keccak_256 } from '@noble/hashes/sha3';
 import { blake2b } from '@noble/hashes/blake2b';
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
+import { generateKeyPairSync, sign as ed25519Sign, verify as ed25519Verify } from 'node:crypto';
 
 let passedAssertions = 0;
-const totalAssertions = 23;
+const totalAssertions = 24;
 
 function assert(condition, description) {
   if (!condition) {
@@ -95,13 +96,13 @@ async function runAudit() {
   const isSigValid = ml_dsa65.verify(sig, msg, dsaKeys.publicKey);
   assert(isSigValid === true, 'ML-DSA-65 genuine signature verified successfully');
 
-  // TIER 6: Wycheproof Negative Tests
-  console.log('\n▶ [TIER 6] Wycheproof Negative & Adversarial Tests:');
+  // TIER 6: Repository-defined adversarial negative tests
+  console.log('\n▶ [TIER 6] Repository-defined Adversarial Negative Tests:');
   const badSig = new Uint8Array(sig);
   badSig[0] ^= 0x01;
-  assert(!ml_dsa65.verify(badSig, msg, dsaKeys.publicKey), 'Wycheproof: Bit-flipped signature rejected cleanly');
+  assert(!ml_dsa65.verify(badSig, msg, dsaKeys.publicKey), 'Bit-flipped signature rejected cleanly');
   const alteredMsg = new TextEncoder().encode('Sui PQC Standalone Invariant Verification Tampered');
-  assert(!ml_dsa65.verify(sig, alteredMsg, dsaKeys.publicKey), 'Wycheproof: Altered message rejected cleanly');
+  assert(!ml_dsa65.verify(sig, alteredMsg, dsaKeys.publicKey), 'Altered message rejected cleanly');
   const truncatedSig = sig.slice(0, 3000);
   let truncatedSigRejected = false;
   try {
@@ -109,7 +110,7 @@ async function runAudit() {
   } catch {
     truncatedSigRejected = true;
   }
-  assert(truncatedSigRejected, 'Wycheproof: Truncated signature rejected cleanly');
+  assert(truncatedSigRejected, 'Truncated signature rejected cleanly');
 
   const malformedPk = dsaKeys.publicKey.slice(0, 1000);
   let malformedPkRejected = false;
@@ -118,14 +119,20 @@ async function runAudit() {
   } catch {
     malformedPkRejected = true;
   }
-  assert(malformedPkRejected, 'Wycheproof: Malformed public key size rejected cleanly');
+  assert(malformedPkRejected, 'Malformed public key size rejected cleanly');
 
   // TIER 7: Sui Dual Conjunction
   console.log('\n▶ [TIER 7] Sui Dual Conjunction Conformance:');
-  const classicalSig = blake2b(Buffer.concat([seedDsa, msg]), { dkLen: 64 });
-  const classicalValid = Buffer.from(classicalSig).equals(Buffer.from(blake2b(Buffer.concat([seedDsa, msg]), { dkLen: 64 })));
+  const { publicKey: edPublicKey, privateKey: edPrivateKey } = generateKeyPairSync('ed25519');
+  const edSignature = ed25519Sign(null, Buffer.from(msg), edPrivateKey);
+  const classicalValid = ed25519Verify(null, Buffer.from(msg), edPublicKey, edSignature);
   assert(classicalValid && isSigValid, 'Dual conjunction holds when both Ed25519 and ML-DSA are valid');
-  assert(!classicalValid || !ml_dsa65.verify(badSig, msg, dsaKeys.publicKey), 'Dual conjunction fail-closed when PQC component compromised');
+
+  const tamperedEdSignature = Buffer.from(edSignature);
+  tamperedEdSignature[0] ^= 0x01;
+  const badClassicalValid = ed25519Verify(null, Buffer.from(msg), edPublicKey, tamperedEdSignature);
+  assert(!badClassicalValid && isSigValid, 'Dual conjunction fail-closed when the Ed25519 component is compromised');
+  assert(classicalValid && !ml_dsa65.verify(badSig, msg, dsaKeys.publicKey), 'Dual conjunction fail-closed when the PQC component is compromised');
 
   console.log('\n=====================================================================');
   console.log(`🏆 ALL ${passedAssertions}/${totalAssertions} CRYPTOGRAPHIC ASSERTIONS PASSED CLEANLY`);
