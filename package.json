@@ -1,7 +1,7 @@
 {
   "name": "quantum-sui-qsui",
   "version": "1.0.0",
-  "description": "Quantum Sui (QSUI) - Next-Generation Post-Quantum Cryptographic Web 4.0 Token & Conway AI Automaton on Sui",
+  "description": "Research prototype for Sui Move, Conway cellular automata, token accounting, and application-layer PQC migration experiments",
   "private": true,
   "type": "module",
   "scripts": {
