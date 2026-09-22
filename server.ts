@@ -3,7 +3,7 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 function getGeminiClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -22,16 +22,25 @@ function getGeminiClient(): GoogleGenAI | null {
 
 async function startServer() {
   const app = express();
-  app.use(express.json());
+  app.disable("x-powered-by");
+  app.use(express.json({ limit: "256kb" }));
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "no-referrer");
+    next();
+  });
 
   // API Health Check
   app.get("/api/health", (req, res) => {
     res.json({
       status: "ok",
-      project: "QSUI",
-      network: "Sui Network (Post-Quantum Layer)",
-      totalSupply: "1,000,000,000,000,000 QSUI (1,000 Trillion)",
+      project: "QSUI research prototype",
+      network: "No public-network deployment is asserted by this health endpoint",
+      tokenModelCap: "1,000,000,000,000,000 QSUI (design model)",
+      applicationPqcStatus: "ML-DSA/ML-KEM integration tests exist; Move contracts do not enforce PQC",
       hasGeminiKey: Boolean(process.env.GEMINI_API_KEY),
+      hasGeminiModel: Boolean(process.env.GEMINI_MODEL),
     });
   });
 
@@ -186,35 +195,33 @@ Regarding your query: "${message}"
           params: [],
         }),
       });
+      if (!response.ok) {
+        throw new Error(`Sui RPC returned HTTP ${response.status}`);
+      }
       const data = await response.json();
+      if (data?.error || data?.result === undefined) {
+        throw new Error(data?.error?.message || "Sui RPC response missing checkpoint result");
+      }
       res.json({
         online: true,
-        network: "Sui Testnet",
+        network: "Sui Testnet RPC",
         rpcEndpoint: "https://fullnode.testnet.sui.io:443",
-        checkpoint: data.result || "38914500",
-        epoch: 482,
-        packageId: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12",
-        treasuryCap: "0x9812bc4f910a37b12d59e4401c22998a14b51203",
-        coinType: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12::qsui::QSUI",
-        symbol: "QSUI",
-        name: "Quantum Sui",
-        maxSupply: "1,000,000,000,000,000",
-        pqcStandard: "ML-DSA-87 (NIST FIPS 204)",
+        checkpoint: String(data.result),
+        packageId: process.env.QSUI_PACKAGE_ID || null,
+        treasuryCap: process.env.QSUI_TREASURY_CAP || null,
+        deploymentVerifiedByThisEndpoint: false,
+        applicationPqcStatus: "The web app has ML-DSA/ML-KEM integration tests; checked-in Move modules do not verify PQC signatures.",
       });
     } catch (e: any) {
-      res.json({
-        online: true,
-        network: "Sui Testnet",
+      res.status(503).json({
+        online: false,
+        network: "Sui Testnet RPC",
         rpcEndpoint: "https://fullnode.testnet.sui.io:443",
-        checkpoint: "38914500",
-        epoch: 482,
-        packageId: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12",
-        treasuryCap: "0x9812bc4f910a37b12d59e4401c22998a14b51203",
-        coinType: "0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12::qsui::QSUI",
-        symbol: "QSUI",
-        name: "Quantum Sui",
-        maxSupply: "1,000,000,000,000,000",
-        pqcStandard: "ML-DSA-87 (NIST FIPS 204)",
+        checkpoint: null,
+        packageId: process.env.QSUI_PACKAGE_ID || null,
+        treasuryCap: process.env.QSUI_TREASURY_CAP || null,
+        deploymentVerifiedByThisEndpoint: false,
+        error: e?.message || "Sui Testnet RPC unavailable",
       });
     }
   });
