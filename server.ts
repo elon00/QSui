@@ -189,7 +189,7 @@ async function startServer() {
       }
 
       const response = await client.models.generateContent({
-        model: "gemini-3.7-flash",
+        model: process.env.GEMINI_MODEL!,
         contents: `${promptToRun}\n\nAdditional user parameters: ${details}`,
         config: {
           systemInstruction: "You are a research assistant for QSUI. Provide evidence-based analysis, clearly identify unknowns, and do not issue legal conclusions, compliance certifications, security certifications, investment recommendations, or claims of deployment/adoption without reproducible evidence.",
