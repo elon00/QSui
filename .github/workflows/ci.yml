@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Truth and environment checks
+        run: |
+          npm run check:env
+          npm run check:truth
+      - name: Cryptographic tests
+        run: |
+          npm run test:nist
+          npm run audit:crypto
+      - name: Reality checks
+        run: npm run reality:universal
+      - name: Production build
+        run: npm run build
