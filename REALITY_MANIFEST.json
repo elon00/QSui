@@ -1,48 +1,53 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "protocol": "SUI.PQC",
-  "version": "1.0.0",
-  "description": "Post-quantum cryptographic hybrid layer for the Sui Network, enforcing NIST FIPS 203 & 204 lattice primitives alongside classical Ed25519 signatures.",
+  "version": "1.1.0",
+  "status": "RESEARCH_TESTNET_ORIENTED_PROTOTYPE",
+  "description": "Research prototype for Sui Move token/automaton experiments and application-layer post-quantum cryptography integration tests.",
   "truthTaxonomy": {
-    "zeroSimulation": true,
-    "failClosed": true,
-    "dualConjunction": true,
-    "weakestLinkLaw": "URS_10 = min(E, I, O, V, R, C, P, F, A, H) * 10"
+    "simulationClearlyLabeled": true,
+    "failClosedClaims": true,
+    "independentAudit": false,
+    "mainnetVerified": false,
+    "publicTestnetDeploymentVerified": false
   },
   "subsystems": [
     {
       "name": "sui-address-derivation",
-      "status": "production-verified",
+      "status": "REPOSITORY_TESTED",
       "algorithm": "blake2b([0x00, ...ed25519_pk], { dkLen: 32 })",
       "outputLengthBytes": 32
     },
     {
       "name": "nist-fips-203-ml-kem-768",
-      "status": "production-verified",
+      "status": "APPLICATION_LAYER_TESTED_NOT_FIPS_VALIDATED",
       "publicKeyBytes": 1184,
       "ciphertextBytes": 1088,
-      "sharedSecretBytes": 32,
-      "implicitRejectionFips203Section73": true
+      "sharedSecretBytes": 32
     },
     {
       "name": "nist-fips-204-ml-dsa-65",
-      "status": "production-verified",
+      "status": "APPLICATION_LAYER_TESTED_NOT_FIPS_VALIDATED",
       "publicKeyBytes": 1952,
       "secretKeyBytes": 4032,
-      "signatureBytes": 3309,
-      "securityLevel": "NIST Level 3"
+      "signatureBytes": 3309
     },
     {
       "name": "sui-dual-hybrid-conjunction",
-      "status": "production-verified",
+      "status": "RESEARCH_IMPLEMENTATION",
       "formula": "Ed25519_valid AND ML_DSA_65_valid AND commitment_match",
       "failClosed": true
     },
     {
       "name": "cross-chain-commitment-anchor",
-      "status": "production-verified",
+      "status": "RESEARCH_IMPLEMENTATION",
       "hashFunction": "Keccak-256",
       "outputLengthBytes": 32
+    },
+    {
+      "name": "move-pqc-enforcement",
+      "status": "NOT_IMPLEMENTED",
+      "note": "Checked-in Move modules do not independently verify ML-DSA or ML-KEM."
     }
   ]
 }
