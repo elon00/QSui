@@ -1,11 +1,11 @@
-# Quantum Sui (QSUI) ⚡
-### Research Web 4.0 Token & Conway Cellular Automaton Prototype on Sui
+# Quantum Sui (QSUI)
+### Sui Move, Conway Automaton, Token Accounting & PQC Migration Research
 
 <div align="center">
 
-[![Sui Network](https://img.shields.io/badge/Blockchain-Sui%20Testnet-0072CE?style=for-the-badge&logo=sui&logoColor=white)](https://suiscan.xyz/testnet)
+[![Status](https://img.shields.io/badge/Status-Research%20%2F%20Testnet--Oriented-orange?style=for-the-badge)](#reality-status)
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20204%20ML--DSA-7B2CBF?style=for-the-badge)](https://csrc.nist.gov/)
-[![Total Supply](https://img.shields.io/badge/Total%20Supply-1%2C000%20Trillion%20QSUI-00C9A7?style=for-the-badge)](https://qsui.netlify.app)
+[![Token Model](https://img.shields.io/badge/Tokenomics-Design%20Model-lightgrey?style=for-the-badge)](#tokenomics-1000-trillion-qsui-supply)
 [![Netlify Status](https://img.shields.io/badge/Hosted%20On-Netlify-00AD9F?style=for-the-badge&logo=netlify&logoColor=white)](https://qsui.netlify.app)
 [![License](https://img.shields.io/badge/License-Apache%202.0-F39C12?style=for-the-badge)](LICENSE)
 
@@ -16,13 +16,34 @@
 
 ---
 
+## Reality status
+
+**Status: RESEARCH / TESTNET-ORIENTED PROTOTYPE — NOT MAINNET OR INDEPENDENTLY AUDITED**
+
+What the repository can currently evidence:
+
+- TypeScript/React application code and locked Node dependencies
+- Sui Move source for the token/automaton experiments
+- repository cryptographic integration tests for selected ML-DSA/ML-KEM behavior
+- deterministic truth/environment checks
+- buildable local web application when CI is green
+
+What is **not** established by this repository alone:
+
+- production Sui mainnet deployment
+- independent smart-contract or cryptographic audit
+- FIPS validation of the application as a cryptographic module
+- real liquidity, exchange listings, token value, users, TVL, revenue, or market adoption
+- legal/securities compliance
+- production PQC enforcement inside the checked-in Move contracts
+
 ## 🌌 Overview
 
-**Quantum Sui (QSUI)** is a research and prototype Web 4.0 token project exploring Sui Move, Conway cellular automata, AI-assisted interfaces, and future post-quantum migration concepts. 
+**Quantum Sui (QSUI)** is a research prototype exploring Sui Move, Conway cellular automata, local token/accounting interfaces, AI-assisted UX, and future post-quantum migration concepts. 
 
 The checked-in Move package does **not** implement ML-DSA or ML-KEM verification. PQC references are research and migration goals until a reviewed implementation, vectors, and reproducible evidence are added.
 
-QSUI merges post-quantum cryptographic primitives with an **on-chain Conway AI Cellular Automaton**, an **Autonomous AI Agentic Chatbot (Sentinel, Legal, Automaton, Marketing personas)**, a **1,000 Trillion Supply Token Launchpad**, and an institutional **Laws, Securities & Testing verification suite**.
+The repository combines a Sui Move token experiment, Conway cellular-automaton code, AI-assisted interfaces, tokenomics design material, and cryptographic integration tests. These components are not evidence of market deployment, legal compliance, audited token issuance, or production-grade PQC on Sui.
 
 ---
 
@@ -112,8 +133,8 @@ module quantum_sui::qsui {
 }
 ```
 
-### 2. Conway AI Cellular Automaton (`quantum_sui::conway_automaton`)
-- Shared on-chain state updating generation cycles, live cell metrics, and quantum entropy seeds across the Sui DAG network.
+### 2. Conway Cellular Automaton (`quantum_sui::conway_automaton`)
+- Move module for cellular-state experiments. Local/source verification does not prove independent public-network deployment or security.
 
 ---
 
@@ -152,25 +173,25 @@ sui client publish --gas-budget 100000000 --skip-dependency-verification
 
 ---
 
-## 📊 Tokenomics (1,000 Trillion QSUI Supply)
+## Tokenomics design model (1,000 Trillion QSUI cap)
 
 | Category | Percentage | Allocation (QSUI) | Vesting / Utility |
 | :--- | :--- | :--- | :--- |
 | **Community Staking & Mining** | 35% | 350,000,000,000,000 | Staking rewards for Conway nodes & PQC validators |
 | **Token Launchpad (IDO)** | 20% | 200,000,000,000,000 | 20% TGE unlock with 6-month linear distribution |
 | **Ecosystem & Research Grants**| 15% | 150,000,000,000,000 | Academic lattice cryptography & Web 4.0 AI tooling |
-| **Liquidity Pools (Sui AMMs)** | 12% | 120,000,000,000,000 | Locked DEX liquidity (Cetus, Turbos, DeepBook) & CEX |
+| **Liquidity / market allocation concept** | 12% | 120,000,000,000,000 | Design allocation only; no locked liquidity or exchange listing is claimed |
 | **Core Devs & Cryptographers** | 10% | 100,000,000,000,000 | 12-month cliff with 36-month linear vesting |
-| **Advisory & Security Audits** | 8% | 80,000,000,000,000 | Continuous formal verification & compliance |
+| **Security / review allocation concept** | 8% | 80,000,000,000,000 | Design allocation only; independent audit is not claimed |
 
 ---
 
-## 🛠️ Local Development & Quick Start
+## Local development
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/elon00/quantum-sui.git
-cd quantum-sui
+git clone https://github.com/elon00/QSui.git
+cd QSui
 npm install
 ```
 
