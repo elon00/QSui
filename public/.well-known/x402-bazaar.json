@@ -1,0 +1,48 @@
+{
+  "x402Version": "1.0.0",
+  "version": "1.0.0",
+  "name": "Quantum Sui (QSUI) — Post-Quantum Autonomous Web 4.0 Ecosystem",
+  "type": "quantum-move-ecosystem",
+  "category": "infrastructure",
+  "tags": [
+    "sui",
+    "move",
+    "pqc",
+    "crystals-kyber",
+    "crystals-dilithium",
+    "conway-automaton",
+    "autonomous-agent",
+    "x402"
+  ],
+  "provider": {
+    "name": "QSUI Protocol / Martin",
+    "website": "https://github.com/elon00/QSui",
+    "payTo": "0x4e61f22c159231f456942ad74272ce3a0058b87ce2da61bb08447814b648bc18",
+    "network": "sui-testnet",
+    "caip2": "sui:4c78adac3ac1c160"
+  },
+  "endpoints": [
+    {
+      "path": "/api/v1/x402/quantum-shield",
+      "method": "POST",
+      "description": "Generate post-quantum shielded transaction envelope for Sui Move smart contract execution",
+      "pricing": {
+        "amountSui": 0.01,
+        "currency": "SUI",
+        "alternativeUsdc": "0.01"
+      },
+      "challengeHeader": "WWW-Authenticate: x402 realm=\"qsui\", payTo=\"0x4e61f22c159231f456942ad74272ce3a0058b87ce2da61bb08447814b648bc18\", amount=\"0.01\", currency=\"SUI\", network=\"sui:4c78adac3ac1c160\""
+    },
+    {
+      "path": "/api/v1/x402/conway/evolve",
+      "method": "POST",
+      "description": "Trigger decentralized Conway AI automaton neural consensus epoch and retrieve state transition proof",
+      "pricing": {
+        "amountSui": 0.02,
+        "currency": "SUI",
+        "alternativeUsdc": "0.02"
+      },
+      "challengeHeader": "WWW-Authenticate: x402 realm=\"qsui\", payTo=\"0x4e61f22c159231f456942ad74272ce3a0058b87ce2da61bb08447814b648bc18\", amount=\"0.02\", currency=\"SUI\", network=\"sui:4c78adac3ac1c160\""
+    }
+  ]
+}
