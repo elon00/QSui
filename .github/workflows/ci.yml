@@ -33,7 +33,9 @@ jobs:
           npm run test:nist
           npm run audit:crypto
       - name: Reality checks
-        run: npm run reality:universal
+        run: |
+          npm run test:reality
+          npm run reality:universal
       - name: Production build
         run: npm run build
       - name: Production dependency audit

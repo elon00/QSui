@@ -14,10 +14,11 @@
     "check:env": "node check-env.mjs",
     "check:truth": "node check-truth.mjs",
     "test:nist": "tsx src/crypto/tests/official-nist-vectors.test.ts",
+    "test:reality": "node --test scripts/reality-network.test.mjs",
     "audit:crypto": "node scripts/audit-crypto.mjs",
     "reality:universal": "tsx scripts/reality-universal.ts",
     "reality:certify": "tsx scripts/generate-urs-certificate.ts",
-    "test": "npm run check:env && npm run check:truth && npm run test:nist && npm run audit:crypto && npm run reality:universal && npm run build"
+    "test": "npm run check:env && npm run check:truth && npm run test:reality && npm run test:nist && npm run audit:crypto && npm run reality:universal && npm run build"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

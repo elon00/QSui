@@ -9,6 +9,8 @@
 
 import fs from 'fs';
 import path from 'path';
+import { spawnSync } from 'node:child_process';
+import { checkSuiRpc, summarizeReality } from './reality-network.mjs';
 import { mlKemEngine } from '../src/crypto/pqc/ml-kem.js';
 import { mlDsaEngine } from '../src/crypto/pqc/ml-dsa.js';
 import { suiHybridSigner } from '../src/crypto/sui/sui-hybrid-signer.js';
@@ -55,7 +57,7 @@ async function runRealityEngine() {
     'Simulation & Math.random() Scanner in Cryptographic Path',
     !hasRandom,
     !hasRandom ? 1.0 : 0.0,
-    !hasRandom ? 'Zero Math.random() simulation detected in src/crypto/' : 'Math.random() found in cryptographic code'
+    !hasRandom ? 'No Math.random() call found in src/crypto/pqc/ml-dsa.ts' : 'Math.random() found in cryptographic code'
   );
 
   // Gate 3: NIST FIPS 204 ML-DSA-65 Keygen & Wire Invariants
@@ -126,45 +128,28 @@ async function runRealityEngine() {
     'NIST FIPS 203 ML-KEM-768 & §7.3 Implicit Rejection',
     gate7Ok,
     gate7Ok ? 1.0 : 0.0,
-    gate7Ok ? 'ML-KEM-768 KEX converged (1184B pk, 1088B ct, 32B ss); FIPS 203 §7.3 leaks 0 oracle bits' : 'KEM operations failed'
+    gate7Ok ? 'ML-KEM-768 round trip passed; tampered ciphertext returned a nonmatching 32-byte value' : 'KEM operations failed'
   );
 
   // Gate 8: Sui Testnet RPC Check
-  let rpcOk = false;
-  let rpcMsg = '';
-  try {
-    const res = await fetch('https://fullnode.testnet.sui.io:443', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'sui_getLatestCheckpointSequenceNumber', params: [] }),
-    });
-    const data = await res.json();
-    if (data.result) {
-      rpcOk = true;
-      rpcMsg = `Sui Testnet RPC Connected: Checkpoint Sequence Number #${data.result}`;
-    } else {
-      rpcOk = true;
-      rpcMsg = 'Sui RPC endpoint responded with valid JSON-RPC frame';
-    }
-  } catch (err: any) {
-    rpcOk = true;
-    rpcMsg = `Sui RPC offline check (fallback configured): ${err.message}`;
-  }
-  recordGate(8, 'Sui RPC Network Health Check', rpcOk, 1.0, rpcMsg);
+  const rpc = await checkSuiRpc();
+  recordGate(8, 'Sui RPC Network Health Check', rpc.passed, rpc.passed ? 1.0 : 0.0, rpc.evidence);
 
   // Gate 9: Reproducibility & KAT Vector Verification
+  const localSuite = spawnSync(process.execPath, ['--import', 'tsx', 'src/crypto/tests/official-nist-vectors.test.ts'], {
+    cwd: process.cwd(), encoding: 'utf8', timeout: 60000,
+  });
+  const localSuitePassed = localSuite.status === 0 && !localSuite.error;
   recordGate(
     9,
-    'Reproducibility & NIST/RFC Test Vector Verification',
-    true,
-    1.0,
-    'RFC 5869, Keccak-256, Blake2b-256, FIPS 203 & FIPS 204 KAT invariants verified'
+    'Repository Cryptographic Regression Suite',
+    localSuitePassed,
+    localSuitePassed ? 1.0 : 0.0,
+    localSuitePassed ? 'Executed repository RFC/hash vectors, PQC wire-size/round-trip/tamper tests; not an official NIST/Wycheproof corpus or certification' : 'Repository cryptographic regression suite failed or timed out'
   );
 
   // Gate 10: Multiplicative Reality & Scorecard Generation
-  const allPassed = results.every((r) => r.passed);
-  const minScore = Math.min(...results.map((r) => r.score));
-  const u10Score = minScore * 10;
+  const { allPassed, minScore, u10Score, verdict, exitCode } = summarizeReality(results);
   recordGate(
     10,
     'Multiplicative Reality & Universal 10/10 Law Calculation',
@@ -179,13 +164,14 @@ async function runRealityEngine() {
   console.log(`  Total Reality Gates:       ${results.filter((r) => r.passed).length} / 10 PASSED`);
   console.log(`  Weakest-Link Gate Score:   ${u10Score.toFixed(1)} / 10`);
   console.log(`  Universal 10/10 Law:       ${allPassed ? 'PASSED (Internal Profile)' : 'FAILED'}`);
-  console.log('  URS Verdict:               🟢 EVIDENCE-BASED PQC PROTOCOL VERIFIED');
+  console.log(`  URS Verdict:               ${verdict}`);
 
   const outDir = path.resolve(process.cwd(), 'reality');
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(path.join(outDir, 'URS_SCORECARD.json'), JSON.stringify({ results, u10Score, timestamp: new Date().toISOString() }, null, 2));
+  fs.writeFileSync(path.join(outDir, 'URS_SCORECARD.json'), JSON.stringify({ results, u10Score, verdict, scope: 'Local checks and RPC connectivity only; deployment and production readiness unverified', timestamp: new Date().toISOString() }, null, 2));
   console.log('  Artifact Created:          reality/URS_SCORECARD.json');
   console.log('══════════════════════════════════════════════════════════════════════════\n');
+  process.exitCode = exitCode;
 }
 
 runRealityEngine().catch((err) => {
