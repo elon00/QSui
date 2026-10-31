@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { Terminal, Copy, Check, ExternalLink, Download, ShieldCheck, Cpu, Play, Sparkles, CheckCircle2, ArrowRight, Code2, Globe, Server, RefreshCw, Layers } from 'lucide-react';
 import { WalletState } from '../types';
+import { emptySuiStatus, normalizeSuiStatus } from '../../scripts/reality-network.mjs';
 
 interface SuiTestnetDeploymentProps {
   wallet: WalletState;
@@ -17,7 +18,7 @@ interface TestnetRpcState {
   network: string;
   rpcEndpoint: string;
   checkpoint: string;
-  epoch: number;
+  epoch: number | null;
   packageId: string;
   treasuryCap: string;
   coinType: string;
@@ -33,20 +34,7 @@ export default function SuiTestnetDeployment({ wallet, onConnectClick }: SuiTest
   const [simulatedDeployStep, setSimulatedDeployStep] = useState<number>(4);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [isRefreshingRpc, setIsRefreshingRpc] = useState<boolean>(false);
-  const [rpcStatus, setRpcStatus] = useState<TestnetRpcState>({
-    online: true,
-    network: 'Sui Testnet',
-    rpcEndpoint: 'https://fullnode.testnet.sui.io:443',
-    checkpoint: '38,915,280',
-    epoch: 482,
-    packageId: '0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12',
-    treasuryCap: '0x9812bc4f910a37b12d59e4401c22998a14b51203',
-    coinType: '0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12::qsui::QSUI',
-    symbol: 'QSUI',
-    name: 'Quantum Sui',
-    maxSupply: '1,000,000,000,000,000',
-    pqcStandard: 'ML-DSA-87 (NIST FIPS 204)',
-  });
+  const [rpcStatus, setRpcStatus] = useState<TestnetRpcState>(emptySuiStatus());
 
   const fetchLiveRpc = async () => {
     setIsRefreshingRpc(true);
@@ -54,10 +42,12 @@ export default function SuiTestnetDeployment({ wallet, onConnectClick }: SuiTest
       const res = await fetch('/api/sui/testnet-status');
       if (res.ok) {
         const data = await res.json();
-        setRpcStatus(data);
+        setRpcStatus(normalizeSuiStatus(data));
+      } else {
+        setRpcStatus(emptySuiStatus());
       }
-    } catch (e) {
-      console.warn('Using cached Sui TestNet status:', e);
+    } catch {
+      setRpcStatus(emptySuiStatus());
     } finally {
       setIsRefreshingRpc(false);
     }
@@ -333,7 +323,7 @@ quantum_sui = "0x0"`;
 
                 <div className="font-mono text-xs text-slate-300 bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2 overflow-y-auto h-[320px]">
                   <div className="text-slate-500">$ sui client active-env</div>
-                  <div className="text-emerald-400">testnet (https://fullnode.testnet.sui.io:443)</div>
+                  <div className="text-emerald-400">testnet (https://graphql.testnet.sui.io/graphql)</div>
                   
                   {simulatedDeployStep >= 1 && (
                     <>
