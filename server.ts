@@ -1,3 +1,4 @@
+import { checkSuiRpc, SUI_TESTNET_GRAPHQL_URL } from "./scripts/reality-network.mjs";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -120,48 +121,20 @@ async function startServer() {
     }
   });
 
-  // Sui TestNet Real-Time Query Endpoint
-  app.get("/api/sui/testnet-status", async (req, res) => {
-    try {
-      const response = await fetch("https://fullnode.testnet.sui.io:443", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: 1,
-          method: "sui_getLatestCheckpointSequenceNumber",
-          params: [],
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`Sui RPC returned HTTP ${response.status}`);
-      }
-      const data = await response.json();
-      if (data?.error || data?.result === undefined) {
-        throw new Error(data?.error?.message || "Sui RPC response missing checkpoint result");
-      }
-      res.json({
-        online: true,
-        network: "Sui Testnet RPC",
-        rpcEndpoint: "https://fullnode.testnet.sui.io:443",
-        checkpoint: String(data.result),
-        packageId: process.env.QSUI_PACKAGE_ID || null,
-        treasuryCap: process.env.QSUI_TREASURY_CAP || null,
-        deploymentVerifiedByThisEndpoint: false,
-        applicationPqcStatus: "The web app has ML-DSA/ML-KEM integration tests; checked-in Move modules do not verify PQC signatures.",
-      });
-    } catch (e: any) {
-      res.status(503).json({
-        online: false,
-        network: "Sui Testnet RPC",
-        rpcEndpoint: "https://fullnode.testnet.sui.io:443",
-        checkpoint: null,
-        packageId: process.env.QSUI_PACKAGE_ID || null,
-        treasuryCap: process.env.QSUI_TREASURY_CAP || null,
-        deploymentVerifiedByThisEndpoint: false,
-        error: e?.message || "Sui Testnet RPC unavailable",
-      });
-    }
+  // Read-only GraphQL connectivity; configured identifiers are not deployment proof.
+  app.get("/api/sui/testnet-status", async (_req, res) => {
+    const rpc = await checkSuiRpc();
+    res.status(rpc.passed ? 200 : 503).json({
+      online: rpc.passed,
+      network: "Sui Testnet GraphQL",
+      rpcEndpoint: SUI_TESTNET_GRAPHQL_URL,
+      checkpoint: rpc.passed ? rpc.checkpoint : null,
+      packageId: process.env.QSUI_PACKAGE_ID || null,
+      treasuryCap: process.env.QSUI_TREASURY_CAP || null,
+      deploymentVerifiedByThisEndpoint: false,
+      applicationPqcStatus: "Application-layer experiments; on-chain verification not established",
+      ...(rpc.passed ? {} : {error: rpc.evidence}),
+    });
   });
 
   // Automated Legal / Audit / Tokenomics Analysis Endpoint

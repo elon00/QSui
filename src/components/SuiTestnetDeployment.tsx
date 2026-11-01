@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { Terminal, Copy, Check, ExternalLink, Download, ShieldCheck, Cpu, Play, Sparkles, CheckCircle2, ArrowRight, Code2, Globe, Server, RefreshCw, Layers } from 'lucide-react';
 import { WalletState } from '../types';
+import { emptySuiStatus, normalizeSuiStatus } from '../../scripts/reality-network.mjs';
 
 interface SuiTestnetDeploymentProps {
   wallet: WalletState;
@@ -17,7 +18,7 @@ interface TestnetRpcState {
   network: string;
   rpcEndpoint: string;
   checkpoint: string;
-  epoch: number;
+  epoch: number | null;
   packageId: string;
   treasuryCap: string;
   coinType: string;
@@ -30,23 +31,10 @@ interface TestnetRpcState {
 export default function SuiTestnetDeployment({ wallet, onConnectClick }: SuiTestnetDeploymentProps) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'cli' | 'move_code' | 'explorer'>('cli');
-  const [simulatedDeployStep, setSimulatedDeployStep] = useState<number>(4);
+  const [simulatedDeployStep, setSimulatedDeployStep] = useState<number>(0);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const [isRefreshingRpc, setIsRefreshingRpc] = useState<boolean>(false);
-  const [rpcStatus, setRpcStatus] = useState<TestnetRpcState>({
-    online: true,
-    network: 'Sui Testnet',
-    rpcEndpoint: 'https://fullnode.testnet.sui.io:443',
-    checkpoint: '38,915,280',
-    epoch: 482,
-    packageId: '0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12',
-    treasuryCap: '0x9812bc4f910a37b12d59e4401c22998a14b51203',
-    coinType: '0x7d89f2a410b28e6c430e791b5c2199fa68e390c2834b912a76f0c82de9a84b12::qsui::QSUI',
-    symbol: 'QSUI',
-    name: 'Quantum Sui',
-    maxSupply: '1,000,000,000,000,000',
-    pqcStandard: 'ML-DSA-87 (NIST FIPS 204)',
-  });
+  const [rpcStatus, setRpcStatus] = useState<TestnetRpcState>(emptySuiStatus());
 
   const fetchLiveRpc = async () => {
     setIsRefreshingRpc(true);
@@ -54,10 +42,12 @@ export default function SuiTestnetDeployment({ wallet, onConnectClick }: SuiTest
       const res = await fetch('/api/sui/testnet-status');
       if (res.ok) {
         const data = await res.json();
-        setRpcStatus(data);
+        setRpcStatus(normalizeSuiStatus(data));
+      } else {
+        setRpcStatus(emptySuiStatus());
       }
-    } catch (e) {
-      console.warn('Using cached Sui TestNet status:', e);
+    } catch {
+      setRpcStatus(emptySuiStatus());
     } finally {
       setIsRefreshingRpc(false);
     }
@@ -67,7 +57,7 @@ export default function SuiTestnetDeployment({ wallet, onConnectClick }: SuiTest
     fetchLiveRpc();
   }, []);
 
-  const moveCode = `// Quantum Sui (QSUI) - Post-Quantum Cryptographic Token on Sui Testnet
+  const moveCode = `// QSUI prototype sample: uncompiled here; no verified on-chain PQC implementation
 module quantum_sui::qsui {
     use std::option;
     use sui::coin::{Self, Coin, TreasuryCap};
@@ -90,7 +80,7 @@ module quantum_sui::qsui {
             9,
             b"QSUI",
             b"Quantum Sui",
-            b"Quantum Sui (QSUI) is the premier Post-Quantum Cryptographic Web 4.0 token with Conway AI Automaton.",
+            b"QSUI prototype token sample. Cryptographic and deployment properties require independent verification.",
             option::none(),
             ctx
         );
@@ -149,19 +139,19 @@ quantum_sui = "0x0"`;
             Deploy Quantum Sui (QSUI) on Sui Testnet
           </h2>
           <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
-            Complete production Move smart contracts, bytecode verification, and 1-click Sui CLI deployment commands to publish Quantum Sui to the live Sui Testnet.
+            Prototype Move source and a local release-plan preview. Build, bytecode verification, wallet signing and on-chain deployment require independent execution and evidence.
           </p>
         </div>
 
         {/* Live Network Status Banner */}
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
           <div className="flex items-center gap-3.5">
-            <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            <div className="w-3 h-3 rounded-full bg-slate-500 shrink-0" />
             <div>
               <div className="font-extrabold text-sm text-white flex items-center gap-2">
-                <span>Sui TestNet RPC: Active & Synchronized</span>
+                <span>Sui Testnet: read-only network observation</span>
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/50">
-                  RPC 200 OK
+                  Deployment unverified
                 </span>
                 <button
                   onClick={fetchLiveRpc}
@@ -290,7 +280,7 @@ quantum_sui = "0x0"`;
                       <button
                         onClick={() =>
                           copyToClipboard(
-                            'sui client publish --gas-budget 100000000 --skip-dependency-verification',
+                            'sui client publish --gas-budget 100000000 ',
                             'step3'
                           )
                         }
@@ -300,7 +290,7 @@ quantum_sui = "0x0"`;
                       </button>
                     </div>
                     <code className="block font-mono bg-slate-900 p-2.5 rounded-lg text-slate-200 text-[11px] select-all">
-                      sui client publish --gas-budget 100000000 --skip-dependency-verification
+                      sui client publish --gas-budget 100000000 
                     </code>
                   </div>
                 </div>
@@ -312,7 +302,7 @@ quantum_sui = "0x0"`;
                     className="w-full py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-400 hover:from-cyan-400 hover:to-teal-300 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-lg shadow-cyan-500/20 disabled:opacity-50"
                   >
                     <Play className="w-4 h-4 fill-current" />
-                    <span>{isPublishing ? 'Broadcasting to Sui Testnet...' : 'Run Testnet Deployment Simulation'}</span>
+                    <span>{isPublishing ? 'Previewing local release steps...' : 'Preview release plan (no transaction)'}</span>
                   </button>
                 </div>
               </div>
@@ -326,53 +316,53 @@ quantum_sui = "0x0"`;
                     <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
                     <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                    <span className="text-xs font-mono font-bold text-slate-400 ml-2">sui-cli terminal</span>
+                    <span className="text-xs font-mono font-bold text-slate-400 ml-2">Local release-plan preview</span>
                   </div>
                   <span className="text-[10px] font-mono text-cyan-400 font-bold">Target: TestNet</span>
                 </div>
 
                 <div className="font-mono text-xs text-slate-300 bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2 overflow-y-auto h-[320px]">
                   <div className="text-slate-500">$ sui client active-env</div>
-                  <div className="text-emerald-400">testnet (https://fullnode.testnet.sui.io:443)</div>
+                  <div className="text-emerald-400">Proposed target: testnet; no CLI command executed here</div>
                   
                   {simulatedDeployStep >= 1 && (
                     <>
                       <div className="text-slate-500 pt-2">$ sui move build</div>
-                      <div className="text-cyan-300">INCLUDING DEPENDENCY Sui (rev testnet)</div>
-                      <div className="text-cyan-300">BUILDING quantum_sui</div>
-                      <div className="text-emerald-400">✓ Move Bytecode Verification Passed (0 Errors)</div>
+                      <div className="text-cyan-300">Plan: resolve and review Sui dependencies</div>
+                      <div className="text-cyan-300">Plan: build quantum_sui with the Sui CLI</div>
+                      <div className="text-emerald-400">Build and bytecode verification have not run in this preview</div>
                     </>
                   )}
 
                   {simulatedDeployStep >= 2 && (
                     <>
                       <div className="text-slate-500 pt-2">$ sui client publish --gas-budget 100000000</div>
-                      <div className="text-slate-400">Signing transaction with sender: 0xqsui89fa41c0b32f...</div>
-                      <div className="text-amber-300">Executing DAG parallel consensus on Sui Testnet...</div>
+                      <div className="text-slate-400">Plan: review the transaction and wallet permissions</div>
+                      <div className="text-amber-300">No signing or transaction broadcast occurs in this preview</div>
                     </>
                   )}
 
                   {simulatedDeployStep >= 3 && (
                     <>
-                      <div className="text-emerald-400">----- Transaction Digest: 8JkL2wXy9mQ4vP7rT3aZ9sF -----</div>
-                      <div className="text-slate-300">Transaction Status: <span className="text-emerald-400 font-bold">Success</span></div>
-                      <div className="text-slate-300">Gas Cost: 0.00845 SUI</div>
+                      <div className="text-emerald-400">Transaction digest: unavailable (nothing broadcast)</div>
+                      <div className="text-slate-300">Transaction status: <span className="text-slate-400 font-bold">Not executed</span></div>
+                      <div className="text-slate-300">Gas cost: unknown; no transaction executed</div>
                     </>
                   )}
 
                   {simulatedDeployStep >= 4 && (
                     <div className="p-2.5 rounded-lg bg-cyan-950/50 border border-cyan-800 text-[11px] text-cyan-200 mt-2">
-                      <div className="font-bold text-white">CREATED OBJECTS:</div>
+                      <div className="font-bold text-white">CONFIGURED VALUES (not deployment evidence):</div>
                       <div>• PackageID: <span className="font-mono text-teal-300">{rpcStatus.packageId}</span></div>
                       <div>• TreasuryCap&lt;QSUI&gt;: {rpcStatus.treasuryCap}</div>
-                      <div>• QuantumSuiState (Shared): 0x4a7e3d1198fbc923a1</div>
+                      <div>• Shared state object: unverified</div>
                       <div>• Total Supply: {rpcStatus.maxSupply} QSUI</div>
                     </div>
                   )}
 
                   {simulatedDeployStep === 0 && (
                     <div className="text-slate-600 italic py-16 text-center">
-                      Click "Run Testnet Deployment Simulation" to observe live Sui Move bytecode packaging, signing, and object creation.
+                      Click "Preview release plan (no transaction)" to preview the release checklist. This does not build, sign or publish anything.
                     </div>
                   )}
                 </div>
@@ -431,9 +421,9 @@ quantum_sui = "0x0"`;
           <div className="bg-slate-900 border border-slate-850 p-6 sm:p-8 rounded-3xl space-y-6 shadow-xl text-left">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
               <div>
-                <h3 className="font-extrabold text-lg text-white">Verified Sui Testnet Move Objects</h3>
+                <h3 className="font-extrabold text-lg text-white">Configured Sui Testnet values</h3>
                 <p className="text-xs text-slate-400 mt-1">
-                  On-chain shared state and immutable metadata verified on the Sui DAG network.
+                  Configured addresses and proposed metadata require independent on-chain verification.
                 </p>
               </div>
 
@@ -455,7 +445,7 @@ quantum_sui = "0x0"`;
                   {rpcStatus.packageId}
                 </div>
                 <div className="text-[10px] text-emerald-400 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Immutable Bytecode
+                  <CheckCircle2 className="w-3 h-3" /> Bytecode verification pending
                 </div>
               </div>
 
@@ -465,7 +455,7 @@ quantum_sui = "0x0"`;
                   {rpcStatus.maxSupply} QSUI
                 </div>
                 <div className="text-[10px] text-teal-400 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" /> 1,000 Trillion Move Cap
+                  <ShieldCheck className="w-3 h-3" /> On-chain supply unverified
                 </div>
               </div>
 
@@ -475,7 +465,7 @@ quantum_sui = "0x0"`;
                   {rpcStatus.pqcStandard}
                 </div>
                 <div className="text-[10px] text-purple-400 flex items-center gap-1">
-                  <Cpu className="w-3 h-3" /> Quantum Lattice Immune
+                  <Cpu className="w-3 h-3" /> On-chain PQC unverified
                 </div>
               </div>
             </div>
