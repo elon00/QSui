@@ -1,0 +1,170 @@
+{
+  "engine": "REA_Reverse_Engineer_Anything",
+  "status": "STRUCTURE_RECONSTRUCTED",
+  "analyzed_files": 54,
+  "manifest": {
+    "bun.lock": {
+      "bytes": 100635
+    },
+    "check-env.mjs": {
+      "bytes": 215
+    },
+    "check-truth.mjs": {
+      "bytes": 951
+    },
+    "index.html": {
+      "bytes": 383
+    },
+    "metadata.json": {
+      "bytes": 546
+    },
+    "netlify.toml": {
+      "bytes": 344
+    },
+    "package-lock.json": {
+      "bytes": 216490
+    },
+    "package.json": {
+      "bytes": 2002
+    },
+    "README.md": {
+      "bytes": 9809
+    },
+    "REALITY_MANIFEST.json": {
+      "bytes": 1729
+    },
+    "SECURITY.md": {
+      "bytes": 1364
+    },
+    "server.ts": {
+      "bytes": 15982
+    },
+    "tsconfig.json": {
+      "bytes": 534
+    },
+    "vite.config.ts": {
+      "bytes": 730
+    },
+    "move\\Move.lock": {
+      "bytes": 953
+    },
+    "move\\Move.toml": {
+      "bytes": 259
+    },
+    "reality\\URS_EVIDENCE_CERTIFICATE.json": {
+      "bytes": 511
+    },
+    "reality\\URS_SCORECARD.json": {
+      "bytes": 2421
+    },
+    "scripts\\audit-crypto.mjs": {
+      "bytes": 7578
+    },
+    "scripts\\generate-urs-certificate.ts": {
+      "bytes": 4876
+    },
+    "scripts\\reality-network.mjs": {
+      "bytes": 3111
+    },
+    "scripts\\reality-network.test.mjs": {
+      "bytes": 3242
+    },
+    "scripts\\reality-universal.ts": {
+      "bytes": 9166
+    },
+    "scripts\\rea_inspector.py": {
+      "bytes": 1485
+    },
+    "scripts\\rsi_engine.py": {
+      "bytes": 2039
+    },
+    "src\\App.tsx": {
+      "bytes": 3715
+    },
+    "src\\index.css": {
+      "bytes": 24
+    },
+    "src\\main.tsx": {
+      "bytes": 241
+    },
+    "src\\types.ts": {
+      "bytes": 3643
+    },
+    "src\\utils.ts": {
+      "bytes": 8912
+    },
+    "tests\\reality_check_harness.py": {
+      "bytes": 1364
+    },
+    ".github\\workflows\\ci.yml": {
+      "bytes": 990
+    },
+    ".github\\workflows\\qmoosa-rsi-rea-sync.yml": {
+      "bytes": 531
+    },
+    ".github\\workflows\\security.yml": {
+      "bytes": 835
+    },
+    "docs\\reality\\URS_EVIDENCE_CERTIFICATE.md": {
+      "bytes": 288
+    },
+    "move\\sources\\conway_automaton.move": {
+      "bytes": 1591
+    },
+    "move\\sources\\quantum_sui.move": {
+      "bytes": 3019
+    },
+    "src\\components\\About.tsx": {
+      "bytes": 3848
+    },
+    "src\\components\\AiAgentChatbot.tsx": {
+      "bytes": 17268
+    },
+    "src\\components\\ConwayAutomaton.tsx": {
+      "bytes": 21350
+    },
+    "src\\components\\Footer.tsx": {
+      "bytes": 6377
+    },
+    "src\\components\\Hero.tsx": {
+      "bytes": 17836
+    },
+    "src\\components\\LawsAndSecurities.tsx": {
+      "bytes": 20725
+    },
+    "src\\components\\Navbar.tsx": {
+      "bytes": 13193
+    },
+    "src\\components\\QuantumSimulator.tsx": {
+      "bytes": 10988
+    },
+    "src\\components\\Roadmap.tsx": {
+      "bytes": 6683
+    },
+    "src\\components\\SuiTestnetDeployment.tsx": {
+      "bytes": 23465
+    },
+    "src\\components\\TokenLaunchpad.tsx": {
+      "bytes": 19165
+    },
+    "src\\components\\TokenomicsAndMarketing.tsx": {
+      "bytes": 15272
+    },
+    "src\\components\\WalletModal.tsx": {
+      "bytes": 6447
+    },
+    "src\\crypto\\pqc\\ml-dsa.ts": {
+      "bytes": 1819
+    },
+    "src\\crypto\\pqc\\ml-kem.ts": {
+      "bytes": 2327
+    },
+    "src\\crypto\\sui\\sui-hybrid-signer.ts": {
+      "bytes": 5131
+    },
+    "src\\crypto\\tests\\official-nist-vectors.test.ts": {
+      "bytes": 7708
+    }
+  },
+  "timestamp": 1794027662
+}
