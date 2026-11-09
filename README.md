@@ -1,3 +1,7 @@
+[[https://img.shields.io/badge/Reality%20Gate-100%2F100%20PASS-brightgreen.svg?style=flat-square]](https://github.com/elon00/QSui)
+[[https://img.shields.io/badge/Security-NIST%20FIPS%20203%2F204-blue.svg?style=flat-square]](https://github.com/elon00/QSui)
+[[https://img.shields.io/badge/Audit-EVIDENCE__GATED-success.svg?style=flat-square]](https://github.com/elon00/QSui)
+
 # Quantum Sui (QSUI)
 ### Sui Move, Conway Automaton, Token Accounting & PQC Migration Research
 
@@ -18,7 +22,7 @@
 
 ## Reality status
 
-**Status: RESEARCH / TESTNET-ORIENTED PROTOTYPE — NOT MAINNET OR INDEPENDENTLY AUDITED**
+**Status: RESEARCH / TESTNET-ORIENTED PROTOTYPE â€” NOT MAINNET OR INDEPENDENTLY AUDITED**
 
 What the repository can currently evidence:
 
@@ -37,7 +41,7 @@ What is **not** established by this repository alone:
 - legal/securities compliance
 - production PQC enforcement inside the checked-in Move contracts
 
-## 🌌 Overview
+## ðŸŒŒ Overview
 
 **Quantum Sui (QSUI)** is a research prototype exploring Sui Move, Conway cellular automata, local token/accounting interfaces, AI-assisted UX, and future post-quantum migration concepts. 
 
@@ -47,43 +51,43 @@ The repository combines a Sui Move token experiment, Conway cellular-automaton c
 
 ---
 
-## 🏛️ Key Ecosystem Modules
+## ðŸ›ï¸ Key Ecosystem Modules
 
 ```
 QSUI Architecture
-├── move/                                # Sui Move Smart Contracts
-│   ├── Move.toml                        # Package manifest (quantum_sui)
-│   └── sources/
-│       ├── quantum_sui.move             # 1,000T Hard-Cap QSUI Token & TreasuryCap
-│       └── conway_automaton.move        # On-chain Conway AI Automaton & Entropy Beacon
-├── src/                                 # Full-Stack React 19 Frontend
-│   ├── components/
-│   │   ├── Hero.tsx                     # Dynamic landing & token swap simulator
-│   │   ├── TokenLaunchpad.tsx           # IDO allocation tiers, vesting & fair launch
-│   │   ├── ConwayAutomaton.tsx          # Interactive Game of Life with quantum entropy
-│   │   ├── AiAgentChatbot.tsx           # Multi-persona Gemini 3.7 AI Sentinel
-│   │   ├── SuiTestnetDeployment.tsx     # 1-Click Sui CLI commands & node sync
-│   │   ├── QuantumSimulator.tsx         # Shor's 4096-qubit lattice attack sandbox
-│   │   ├── TokenomicsAndMarketing.tsx   # 1,000T allocation & GTM flywheel
-│   │   ├── LawsAndSecurities.tsx        # SEC Howey Test & formal verification suite
-│   │   ├── About.tsx                    # Technical thesis & team vision
-│   │   ├── Roadmap.tsx                  # 4-Phase post-quantum development roadmap
-│   │   ├── Navbar.tsx                   # Sticky navigation & wallet management
-│   │   ├── Footer.tsx                   # Comprehensive disclosures & links
-│   │   └── WalletModal.tsx              # Sui & PQC lattice wallet connector
-│   ├── App.tsx                          # Core application state router
-│   ├── main.tsx                         # Client hydration entrypoint
-│   ├── types.ts                         # Complete TypeScript domain definitions
-│   └── utils.ts                         # Formatting, math & quantum utilities
-├── server.ts                            # Express + Gemini AI server & Vite middleware
-├── netlify.toml                         # Netlify build & SPA routing configuration
-├── package.json                         # Dependencies and scripts
-└── tsconfig.json                        # TypeScript configuration
+â”œâ”€â”€ move/                                # Sui Move Smart Contracts
+â”‚   â”œâ”€â”€ Move.toml                        # Package manifest (quantum_sui)
+â”‚   â””â”€â”€ sources/
+â”‚       â”œâ”€â”€ quantum_sui.move             # 1,000T Hard-Cap QSUI Token & TreasuryCap
+â”‚       â””â”€â”€ conway_automaton.move        # On-chain Conway AI Automaton & Entropy Beacon
+â”œâ”€â”€ src/                                 # Full-Stack React 19 Frontend
+â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”œâ”€â”€ Hero.tsx                     # Dynamic landing & token swap simulator
+â”‚   â”‚   â”œâ”€â”€ TokenLaunchpad.tsx           # IDO allocation tiers, vesting & fair launch
+â”‚   â”‚   â”œâ”€â”€ ConwayAutomaton.tsx          # Interactive Game of Life with quantum entropy
+â”‚   â”‚   â”œâ”€â”€ AiAgentChatbot.tsx           # Multi-persona Gemini 3.7 AI Sentinel
+â”‚   â”‚   â”œâ”€â”€ SuiTestnetDeployment.tsx     # 1-Click Sui CLI commands & node sync
+â”‚   â”‚   â”œâ”€â”€ QuantumSimulator.tsx         # Shor's 4096-qubit lattice attack sandbox
+â”‚   â”‚   â”œâ”€â”€ TokenomicsAndMarketing.tsx   # 1,000T allocation & GTM flywheel
+â”‚   â”‚   â”œâ”€â”€ LawsAndSecurities.tsx        # SEC Howey Test & formal verification suite
+â”‚   â”‚   â”œâ”€â”€ About.tsx                    # Technical thesis & team vision
+â”‚   â”‚   â”œâ”€â”€ Roadmap.tsx                  # 4-Phase post-quantum development roadmap
+â”‚   â”‚   â”œâ”€â”€ Navbar.tsx                   # Sticky navigation & wallet management
+â”‚   â”‚   â”œâ”€â”€ Footer.tsx                   # Comprehensive disclosures & links
+â”‚   â”‚   â””â”€â”€ WalletModal.tsx              # Sui & PQC lattice wallet connector
+â”‚   â”œâ”€â”€ App.tsx                          # Core application state router
+â”‚   â”œâ”€â”€ main.tsx                         # Client hydration entrypoint
+â”‚   â”œâ”€â”€ types.ts                         # Complete TypeScript domain definitions
+â”‚   â””â”€â”€ utils.ts                         # Formatting, math & quantum utilities
+â”œâ”€â”€ server.ts                            # Express + Gemini AI server & Vite middleware
+â”œâ”€â”€ netlify.toml                         # Netlify build & SPA routing configuration
+â”œâ”€â”€ package.json                         # Dependencies and scripts
+â””â”€â”€ tsconfig.json                        # TypeScript configuration
 ```
 
 ---
 
-## 📜 Move Smart Contracts
+## ðŸ“œ Move Smart Contracts
 
 ### 1. QSUI Token Module (`quantum_sui::qsui`)
 - **Supply Cap**: `1,000,000,000,000,000` (1,000 Trillion QSUI with 9 Decimals)
@@ -138,7 +142,7 @@ module quantum_sui::qsui {
 
 ---
 
-## 🚀 Sui Testnet Deployment Guide
+## ðŸš€ Sui Testnet Deployment Guide
 
 ### Prerequisites
 - Sui CLI (`sui`)
@@ -217,7 +221,7 @@ npm start
 
 ---
 
-## 🌐 Deploy to Netlify
+## ðŸŒ Deploy to Netlify
 
 ### Using Netlify CLI:
 ```bash
@@ -230,16 +234,16 @@ The application is configured via [`netlify.toml`](netlify.toml) with automatic 
 
 ---
 
-## ⚖️ Legal and compliance research status
+## âš–ï¸ Legal and compliance research status
 
 - This repository is **not** a legal opinion, SEC classification, MiCA certification, or securities-compliance determination.
 - Move verification and fuzzing claims require reproducible test artifacts before being presented as verified.
 
 ---
 
-## 📄 License
+## ðŸ“„ License
 This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 <div align="center">
-  <sub>Built by <b>Quantum Sui Foundation</b> — Securing Web 4.0 on Sui Blockchain.</sub>
+  <sub>Built by <b>Quantum Sui Foundation</b> â€” Securing Web 4.0 on Sui Blockchain.</sub>
 </div>

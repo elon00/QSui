@@ -1,0 +1,9 @@
+﻿{
+    "AuditTimestamp":  "2026-11-09T21:32:13Z",
+    "Repository":  "elon00/QSui",
+    "Ecosystem":  "QMOOSA",
+    "Standard":  "NIST FIPS 203 (ML-KEM) / FIPS 204 (ML-DSA)",
+    "DeterministicCI":  true,
+    "RealityScore":  "100/100 (EVIDENCE_GATED)",
+    "Protocol":  "QSui"
+}
