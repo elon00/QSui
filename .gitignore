@@ -7,3 +7,6 @@ coverage/
 .env*
 !.env.example
 .netlify/
+
+# Lean 4 build artifacts
+lean_verify/.lake/
